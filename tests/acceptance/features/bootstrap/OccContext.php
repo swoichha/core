@@ -67,6 +67,11 @@ class OccContext implements Context {
 	private $initialTechPreviewStatus;
 
 	/**
+	 * @var array $createdLocalStorage
+	 */
+	private $createdLocalStorage;
+
+	/**
 	 * @return boolean
 	 */
 	public function isTechPreviewEnabled() {
@@ -362,6 +367,16 @@ class OccContext implements Context {
 			"background:queue:delete $match"
 		);
 		$this->lastDeletedJobId = $match;
+	}
+
+	/**
+	 * List created local storage mount
+	 *
+	 * @return void
+	 * @throws Exception
+	 */
+	public function listLocalStorageMount() {
+		\OccContext::invokingTheCommand('files_external:list --output=json');
 	}
 
 	/**
@@ -1118,6 +1133,34 @@ class OccContext implements Context {
 		);
 		$this->theCommandShouldHaveBeenSuccessful();
 	}
+
+	/**
+	 * @When the administrator lists all the created local storage using command line
+	 *
+	 * @return void
+	 * @throws Exception
+	 */
+	public function userListsLocalStorageMountUsingTheOccCommand() {
+		$this->listLocalStorageMount();
+	}
+
+	/**
+	 * @Then the following local storages should exist
+	 *
+	 * @returns void
+	 */
+	public function theFollowingLocalStoragesShouldExist(TableNode $mountPoints)
+	{
+		$expectedLocalStorages = $mountPoints->getColumnsHash();
+		$commandOutput = json_decode($this->featureContext->getStdOutOfOccCommand());
+		foreach($commandOutput as $i) {
+			$this->createdLocalStorage[$i->mount_id] = ltrim($i->mount_point, '/');
+		}
+	foreach($expectedLocalStorages as $i) {
+	  Assert::assertContains($i['localStorage'], $this->createdLocalStorage);
+	}
+	}
+
 
 	/**
 	 * @When the administrator list the repair steps using the occ command
