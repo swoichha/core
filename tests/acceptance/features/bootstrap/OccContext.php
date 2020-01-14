@@ -1182,13 +1182,12 @@ class OccContext implements Context {
 		}
 	}
 
-
-
 	/**
 	 * @When the administrator deletes folder :folder using occ command
 	 *
 	 * @param string $folder
 	 *
+	 * @return void
 	 * @throws Exception
 	 */
 	public function administratorDeletesFolder($folder) {
@@ -1208,8 +1207,6 @@ class OccContext implements Context {
 		$this->invokingTheCommand('files_external:delete --yes ' . $mount_id);
 		unset($this->createdLocalStorage[$mount_id]);
 	}
-
-
 
 	/**
 	 * @When the administrator list the repair steps using the occ command
