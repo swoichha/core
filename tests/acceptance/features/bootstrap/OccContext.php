@@ -1147,20 +1147,20 @@ class OccContext implements Context {
 	/**
 	 * @Then the following local storages should exist
 	 *
-	 * @returns void
+	 * @param TableNode $mountPoints
+	 *
+	 * @return void
 	 */
-	public function theFollowingLocalStoragesShouldExist(TableNode $mountPoints)
-	{
+	public function theFollowingLocalStoragesShouldExist(TableNode $mountPoints) {
 		$expectedLocalStorages = $mountPoints->getColumnsHash();
-		$commandOutput = json_decode($this->featureContext->getStdOutOfOccCommand());
-		foreach($commandOutput as $i) {
-			$this->createdLocalStorage[$i->mount_id] = ltrim($i->mount_point, '/');
+		$commandOutput = \json_decode($this->featureContext->getStdOutOfOccCommand());
+		foreach ($commandOutput as $i) {
+			$this->createdLocalStorage[$i->mount_id] = \ltrim($i->mount_point, '/');
 		}
-	foreach($expectedLocalStorages as $i) {
-	  Assert::assertContains($i['localStorage'], $this->createdLocalStorage);
+		foreach ($expectedLocalStorages as $i) {
+			Assert::assertContains($i['localStorage'], $this->createdLocalStorage);
+		}
 	}
-	}
-
 
 	/**
 	 * @When the administrator list the repair steps using the occ command
