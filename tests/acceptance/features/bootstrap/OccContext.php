@@ -1135,7 +1135,7 @@ class OccContext implements Context {
 	}
 
 	/**
-	 * @When the administrator lists all the created local storage using command line
+	 * @When the administrator lists all the created local storage using occ command
 	 *
 	 * @return void
 	 * @throws Exception
@@ -1145,7 +1145,7 @@ class OccContext implements Context {
 	}
 
 	/**
-	 * @Then the following local storages should exist
+	 * @Then the following local storage should exist
 	 *
 	 * @param TableNode $mountPoints
 	 *
