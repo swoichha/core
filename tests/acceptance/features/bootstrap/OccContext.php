@@ -1163,6 +1163,55 @@ class OccContext implements Context {
 	}
 
 	/**
+	 * @Then the following local storage should not exist
+	 *
+	 * @param TableNode $mountPoints
+	 *
+	 * @return void
+	 * @throws Exception
+	 */
+	public function theFollowingLocalStoragesShouldNotExist(TableNode $mountPoints) {
+		$this->listLocalStorageMount();
+		$expectedLocalStorages = $mountPoints->getColumnsHash();
+		$commandOutput = \json_decode($this->featureContext->getStdOutOfOccCommand());
+		foreach ($commandOutput as $i) {
+			$this->createdLocalStorage[$i->mount_id] = \ltrim($i->mount_point, '/');
+		}
+		foreach ($expectedLocalStorages as $i) {
+			Assert::assertNotContains($i['localStorage'], $this->createdLocalStorage);
+		}
+	}
+
+
+
+	/**
+	 * @When the administrator deletes folder :folder using occ command
+	 *
+	 * @param string $folder
+	 *
+	 * @throws Exception
+	 */
+	public function administratorDeletesFolder($folder) {
+		$this->listLocalStorageMount();
+		$commandOutput = \json_decode($this->featureContext->getStdOutOfOccCommand());
+		foreach ($commandOutput as $i) {
+			$this->createdLocalStorage[$i->mount_id] = \ltrim($i->mount_point, '/');
+		}
+		foreach ($this->createdLocalStorage as $key => $value) {
+			if ($value === $folder) {
+				$mount_id = $key;
+			}
+		}
+		if (!isset($mount_id)) {
+			throw  new Exception("Id not found for folder to be deleted");
+		}
+		$this->invokingTheCommand('files_external:delete --yes ' . $mount_id);
+		unset($this->createdLocalStorage[$mount_id]);
+	}
+
+
+
+	/**
 	 * @When the administrator list the repair steps using the occ command
 	 *
 	 * @return void
