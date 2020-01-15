@@ -1824,31 +1824,17 @@ class Manager implements IManager {
 	}
 
 	/**
-	 * Check $newAttributes attribute is a subset of $allowedAttributes
+	 * Check $newAttributes attribute is a subset of $allowedAttributes.
+	 * Attributes cannot be modified or removed
 	 *
 	 * @param IAttributes $allowedAttributes
 	 * @param IAttributes $newAttributes
 	 * @return boolean ,true if $allowedAttributes enabled is super set of $newAttributes enabled, else false
 	 */
 	private function strictSubsetOfAttributes($allowedAttributes, $newAttributes) {
-		// if both are empty, it is strict subset
-		if ((!$allowedAttributes || empty($allowedAttributes->toArray()))
-			&& (!$newAttributes || empty($newAttributes->toArray()))) {
-			return true;
-		}
-
-		// make sure that number of attributes is the same
-		if (\count($allowedAttributes->toArray()) !== \count($newAttributes->toArray())) {
-			return false;
-		}
-
-		// if number of attributes is the same, make sure that attributes are
-		// existing in allowed set and disabled attribute is not being enabled
-		foreach ($newAttributes->toArray() as $newAttribute) {
-			$allowedEnabled = $allowedAttributes->getAttribute($newAttribute['scope'], $newAttribute['key']);
-			if (($newAttribute['enabled'] === true && $allowedEnabled === false)
-				|| ($newAttribute['enabled'] === null && $allowedEnabled !== null)
-				|| $allowedEnabled === null) {
+		foreach ($allowedAttributes->toArray() as $allowedAttribute) {
+			$newAttribute = $newAttributes->getAttribute($allowedAttribute['scope'], $allowedAttribute['key']);
+			if ($allowedAttribute['enabled'] !== $newAttribute) {
 				return false;
 			}
 		}

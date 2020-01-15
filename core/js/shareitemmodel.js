@@ -220,10 +220,6 @@
 		updateShare: function(shareId, properties, options) {
 			var self = this;
 
-			options = _.defaults(options, {
-				silent: false
-			})
-
 			// Extend attributes for update share
 			properties.attributes = this._handleUpdateShareAttributes(shareId, properties, options);
 
@@ -234,7 +230,6 @@
 				dataType: 'json'
 			}).done(function() {
 				self.fetch({
-					silent: options.silent,
 					success: function() {
 						if (_.isFunction(options.success)) {
 							options.success(self);
@@ -672,10 +667,6 @@
 		fetch: function(options) {
 			var model = this;
 
-			options = _.defaults(options, {
-				silent: false
-			})
-
 			this.trigger('request', this);
 
 			var deferred = $.when(
@@ -695,11 +686,15 @@
 					reshare = model._groupReshares(data2[0].ocs.data);
 				}
 
+				// update model properties,
+				// this should cause rerendering of the object
 				model.set(model.parse({
 					shares: sharesMap,
 					reshare: reshare
 				}), {
-					silent: options.silent
+					// do not allow silent, as apps might rely on reacting to
+					// changes to the model
+					silent: false,
 				});
 			});
 
@@ -873,6 +868,7 @@
 		 *
 		 * @param shareIndex
 		 * @returns OC.Share.Types.ShareAttribute[]
+		 * @deprecated ShareAttributesAPI v1 registration will be depreciated. ShareAttributesAPI v2 requires apps to extend this class
 		 */
 		getShareAttributes: function(shareIndex) {
 			/** @type OC.Share.Types.ShareInfo **/
