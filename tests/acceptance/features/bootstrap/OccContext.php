@@ -376,7 +376,7 @@ class OccContext implements Context {
 	 * @throws Exception
 	 */
 	public function listLocalStorageMount() {
-		\OccContext::invokingTheCommand('files_external:list --output=json');
+		$this->invokingTheCommand('files_external:list --output=json');
 	}
 
 	/**
@@ -1154,11 +1154,11 @@ class OccContext implements Context {
 	public function theFollowingLocalStoragesShouldExist(TableNode $mountPoints) {
 		$expectedLocalStorages = $mountPoints->getColumnsHash();
 		$commandOutput = \json_decode($this->featureContext->getStdOutOfOccCommand());
-		foreach ($commandOutput as $i) {
-			$this->createdLocalStorage[$i->mount_id] = \ltrim($i->mount_point, '/');
+		foreach ($commandOutput as $storageEntry) {
+			$this->createdLocalStorage[$storageEntry->mount_id] = \ltrim($storageEntry->mount_point, '/');
 		}
-		foreach ($expectedLocalStorages as $i) {
-			Assert::assertContains($i['localStorage'], $this->createdLocalStorage);
+		foreach ($expectedLocalStorages as $expectedStorageEntry) {
+			Assert::assertContains($expectedStorageEntry['localStorage'], $this->createdLocalStorage);
 		}
 	}
 
