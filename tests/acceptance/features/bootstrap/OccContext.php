@@ -376,7 +376,7 @@ class OccContext implements Context {
 	 * @throws Exception
 	 */
 	public function listLocalStorageMount() {
-		\OccContext::invokingTheCommand('files_external:list --output=json');
+		$this->invokingTheCommand('files_external:list --output=json');
 	}
 
 	/**
